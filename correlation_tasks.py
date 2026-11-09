@@ -1,15 +1,27 @@
 """Задачи второй части лабораторной: корреляционный анализ."""
 from __future__ import annotations
-
+import pandas as pd
 from grader_contracts.correlation_tasks import BrainCorrelationSummary, BrainDataInput
 
-
 def analyze_brain_correlations(data: BrainDataInput) -> BrainCorrelationSummary:
-    """Проанализируйте brainsize.txt.
+    df = data.df
 
-    Разделите наблюдения по полу и для каждой группы вычислите корреляции
-    признаков FSIQ, VIQ, PIQ, Weight, Height с MRI_Count методом Пирсона.
-    В strongest_mri_feature верните название признака с наибольшим модулем
-    корреляции с MRI_Count среди объединённых результатов двух групп.
-    """
-    raise NotImplementedError
+    df_male = df[df['Gender'] == 'Male']
+    df_female = df[df['Gender'] == 'Female']
+
+    features = ['FSIQ', 'VIQ', 'PIQ', 'Weight', 'Height', 'MRI_Count']
+
+    corr_male = df_male[features].corr(method='pearson')
+    corr_female = df_female[features].corr(method='pearson')
+
+    mri_corr_male = corr_male['MRI_Count'].drop('MRI_Count')
+    mri_corr_female = corr_female['MRI_Count'].drop('MRI_Count')
+
+    combined_mri_corr = pd.concat([mri_corr_male, mri_corr_female])
+    strongest_feature = combined_mri_corr.abs().idxmax()
+
+    return BrainCorrelationSummary(
+        male_correlation=corr_male,
+        female_correlation=corr_female,
+        strongest_mri_feature=strongest_feature
+    )

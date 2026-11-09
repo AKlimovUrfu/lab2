@@ -4,7 +4,6 @@ import pandas as pd
 from grader_contracts.correlation_tasks import BrainCorrelationSummary, BrainDataInput
 
 def analyze_brain_correlations(data: BrainDataInput) -> BrainCorrelationSummary:
-    """Проанализируйте brainsize.txt."""
     df = data.df
 
     df_male = df[df['Gender'] == 'Male']
@@ -13,7 +12,7 @@ def analyze_brain_correlations(data: BrainDataInput) -> BrainCorrelationSummary:
     features = ['FSIQ', 'VIQ', 'PIQ', 'Weight', 'Height', 'MRI_Count']
 
     corr_male = df_male[features].corr(method='pearson')
-    corr_female = df_female[features].corr(method='pearson')
+    corr_female = df_female[features].corr(method='female')
 
     mri_corr_male = corr_male['MRI_Count'].drop('MRI_Count')
     mri_corr_female = corr_female['MRI_Count'].drop('MRI_Count')
